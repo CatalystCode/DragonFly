@@ -14,10 +14,21 @@ App = {
         crossDomain: true,
         dataType: "json",
         success: function (response) {
-            var resp = JSON.parse(response)
-            console.log(resp);
-            for(var x =0; x < resp.length; x++) {
+            for(var x =0; x < response.length; x++) {
+              Hardware.getDevice(response[x].address).then(function(result){
+                // get the laptop details from blockchain
 
+                // [ "serial", "assetTag", 0, 0, "userId"]
+                var laptop = {
+                  serialNumber: result[0],
+                  assetTag: result[1],
+                  userId: result[4],
+                  address: response[x].address
+                };  
+
+                App.loadLaptop(laptop);
+
+              }, function(err){console.log(err);});
             }
         },
         error: function (xhr, status) {
@@ -27,15 +38,14 @@ App = {
 
     $.getJSON('../laptops.json', function(data) {
       for (i = 0; i < data.length; i ++) {
-        App.loadLaptop(null, data[i])
+        App.loadLaptop(data[i])
       }
     });
 
     $(document).on('click', '.btn-edit', App.handleAddLaptop);
   },
 
-  loadLaptop: function(address, laptop) {
-    // get the laptop details from blockchain
+  loadLaptop: function(laptop) {
 
     // load the template
     var laptopsRow = $('#laptopsRow');
@@ -53,7 +63,7 @@ App = {
     laptopTemplate.find('img').attr('src', img);
     laptopTemplate.find('.laptop-asset-tag').text(laptop.assetTag);
     laptopTemplate.find('.laptop-user-id').text(laptop.userId);
-    laptopTemplate.find('.btn-edit').attr('data-id', laptop.serialNumber);
+    laptopTemplate.find('.btn-edit').attr('data-id', laptop.address);
 
     laptopsRow.append(laptopTemplate.html());
   },
