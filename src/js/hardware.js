@@ -40,6 +40,10 @@ var Hardware = {
                 resolve(contract);
             })
         });
+    },
+
+    assignNewAssetTag: function(contractAddress, newAssetTag) {
+        return Hardware.contract.at(contractAddress).assignNewAssetTag(newAssetTag);
     }
 };
 
