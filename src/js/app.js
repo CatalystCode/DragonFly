@@ -3,6 +3,11 @@ App = {
   init: function() {
 
     // Load laptops.
+    $.get( "http://mdfinancial-backend.azurewebsites.net/api/assets", function(laptops) {
+      debug;
+      console.log(laptops);
+    });
+
     $.getJSON('../laptops.json', function(data) {
       var laptopsRow = $('#laptopsRow');
       var laptopTemplate = $('#laptopTemplate');
