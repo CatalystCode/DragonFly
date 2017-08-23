@@ -17,6 +17,16 @@ App = {
 
     $(document).on('click', '.btn-submit', App.handleSubmit);
 
+    $.get("http://mdfinancial-backend.azurewebsites.net/api/auth", function(users) {
+      for(let user of users) {
+        $('#userIdSelect')
+          .append($('<option>', {
+          value: user.id,
+          text: user.displayName,
+        }));
+      }
+    });
+
     return App.initWeb3();
   },
 
@@ -56,9 +66,14 @@ App = {
     var ram = $("#ramInput").val();
     var userId = $('#userIdSelect').find(":selected").text();
 
-    Hardware.newDevice(serialNumber, assetTag, ram, hardDrive).then(function(contract){
-      Hardware.assignToUser(contract.address, userId);
-    });
+    if(App.mode == "edit") {
+      
+    } else {
+      Hardware.newDevice(serialNumber, assetTag, ram, hardDrive).then(function(contract){
+        Hardware.assignToUser(contract.address, userId);
+        $.post( "http://mdfinancial-backend.azurewebsites.net/api/assets", { address: contract.address } );
+      });
+    }
 
     console.log(serialNumber + assetTag + hardDrive + ram + userId);
   },
