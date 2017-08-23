@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "start": "node app.js",
     "dev": "lite-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,5 +15,8 @@
   "license": "ISC",
   "devDependencies": {
     "lite-server": "^2.3.0"
+  },
+  "dependencies": {
+    "static-server": "^2.0.5"
   }
 }
