@@ -45,6 +45,18 @@ var Hardware = {
 
     assignToUser: function(contractAddress, userId) {
         return Hardware.contract.at(contractAddress).assignToUser(userId);
+    },
+
+    newAssetTag: function(contractAddress, assetTag) {
+        return Hardware.contract.at(contractAddress).assignNewAssetTag(assetTag);
+    },
+
+    updateHardware: function(contractAddress, newRamSize, newHDDSize) {
+        return Hardware.contract.at(contractAddress).updateHardware(newRamSize, newHDDSize);
+    },
+
+    freeLaptop: function(contractAddress) {
+        return Hardware.contract.at(contractAddress).freeLaptop();
     }
 };
 
