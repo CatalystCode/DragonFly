@@ -28,7 +28,6 @@ var Hardware = {
             Hardware.contract.setProvider(Hardware.web3Provider);
         });
     },
-
     
     newDevice: function(serial, assetTag, ramSize, hddSize) {
         return new Promise((resolve, reject) => {
@@ -57,6 +56,25 @@ var Hardware = {
 
     freeLaptop: function(contractAddress) {
         return Hardware.contract.at(contractAddress).freeLaptop();
+    },
+
+    getDevice: function(contractAddress) {
+        var contract = Hardware.contract.at(contractAddress);
+
+        var p1 = contract.serial.call();
+        var p2 = contract.assetTag.call();
+        var p3 = contract.ramSize.call();
+        var p4 = contract.hddSize.call();
+        var p5 = contract.userid.call();
+
+        return Promise.all([p1, p2, p3, p4, p5]).then(values => { 
+            // oh my god. I'm so sorry.
+            values[2] = values[2].c[0];
+            values[3] = values[3].c[0];
+
+            // [ "serial", "assetTag", 0, 0, "userId"]
+            console.log(values); 
+        });
     }
 };
 
