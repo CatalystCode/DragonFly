@@ -69,11 +69,11 @@ var Hardware = {
 
         return Promise.all([p1, p2, p3, p4, p5]).then(values => { 
             // oh my god. I'm so sorry.
-            values[2] = values[2].c[0];
-            values[3] = values[3].c[0];
+            values[2] = values[2].toNumber();
+            values[3] = values[3].toNumber();
 
             // [ "serial", "assetTag", 0, 0, "userId"]
-            console.log(values); 
+            return values;
         });
     }
 };
