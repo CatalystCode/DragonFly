@@ -4,8 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Pete's Pet Shop</title>
+    <title>MD Financial Laptop Management</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -16,47 +15,71 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+
+        body {
+            background-image: url("/images/md-logo.jpg");
+            background-repeat: no-repeat;
+            background-size: 120px 120px;
+            background-position: right 10px top 10px;
+        }
+
+        .add-laptop-button {
+            margin: 15px;
+        }
+
+        .md-logo {
+            margin: 20px;
+            width: 120px;
+        }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
-          <h1 class="text-center">Pete's Pet Shop</h1>
+          <h1 class="text-center">MD Financial Laptops</h1>
           <hr/>
           <br/>
         </div>
       </div>
+      <div class="row justify-content-end">
+          <div class="col-2">
+            <a href="laptop.html?mode=add" role="button" class="btn btn-primary add-laptop-button">Add Laptop</a>
+            <br/>
+          </div>
+      </div>
 
-      <div id="petsRow" class="row">
-        <!-- PETS LOAD HERE -->
+      <div id="laptopsRow" class="row">
+        <!-- LAPTOPS LOAD HERE -->
       </div>
     </div>
 
-    <div id="petTemplate" style="display: none;">
+    <div id="laptopTemplate" style="display: none;">
       <div class="col-sm-6 col-md-4 col-lg-3">
-        <div class="panel panel-default panel-pet">
+        <div class="panel panel-default panel-laptop">
           <div class="panel-heading">
-            <h3 class="panel-title">Scrappy</h3>
+            <h3 class="panel-title"></h3>
           </div>
           <div class="panel-body">
-            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
+            <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="/images/SurfaceBook_Office_V2.jpg" data-holder-rendered="true">
             <br/><br/>
-            <strong>Breed</strong>: <span class="pet-breed">Golden Retriever</span><br/>
-            <strong>Age</strong>: <span class="pet-age">3</span><br/>
-            <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br/><br/>
-            <button class="btn btn-default btn-adopt" type="button" data-id="0">Adopt</button>
+            <strong>Asset tag</strong>: <span class="laptop-asset-tag"></span><br/>
+            <strong>User Id</strong>: <span class="laptop-user-id"></span><br/>
+            <button class="btn btn-default btn-edit" type="button" data-id="0">Edit</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    -->
+    <script src="js/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
-    <script src="js/hardware.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>
