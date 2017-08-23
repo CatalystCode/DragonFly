@@ -37,12 +37,6 @@ App = {
         }
     });
 
-    $.getJSON('../laptops.json', function(data) {
-      for (i = 0; i < data.length; i ++) {
-        App.loadLaptop(data[i])
-      }
-    });
-
     $(document).on('click', '.btn-edit', App.handleAddLaptop);
   },
 
