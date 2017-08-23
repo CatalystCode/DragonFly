@@ -26,6 +26,11 @@ App = {
 
   initEditLaptop: function() {
     $("#page-title").text("Edit Laptop");
+
+    $("#serialNumberInput").val("zzzzzz");
+    $("#assetTagInput").val("yyyyyyy");
+    $("#hardDriveInput").val("cccccccc");
+    $("#cpuInput").val("hsdhdhfhdfhdfh");
   },
 
   initWeb3: function() {
@@ -45,7 +50,13 @@ App = {
   handleSubmit: function() {
     event.preventDefault();
 
-    console.log("submit button clicked.");
+    var serialNumber = $("#serialNumberInput").val();
+    var assetTag = $("#assetTagInput").val();
+    var hardDrive = $("#hardDriveInput").val();
+    var cpu = $("#cpuInput").val();
+    var userId = $('#userIdSelect').find(":selected").text();
+
+    console.log(serialNumber + assetTag + hardDrive + cpu + userId);
   },
 
   markAdopted: function(adopters, account) {
