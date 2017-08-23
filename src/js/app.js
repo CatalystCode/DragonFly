@@ -1,62 +1,30 @@
 App = {
-  web3Provider: null,
-  contracts: {},
 
   init: function() {
-    // Load pets.
-    $.getJSON('../pets.json', function(data) {
-      var petsRow = $('#petsRow');
-      var petTemplate = $('#petTemplate');
+    // Load laptops.
+    $.getJSON('../laptops.json', function(data) {
+      var laptopsRow = $('#laptopsRow');
+      var laptopTemplate = $('#laptopTemplate');
 
       for (i = 0; i < data.length; i ++) {
-        petTemplate.find('.panel-title').text(data[i].name);
-        petTemplate.find('img').attr('src', data[i].picture);
-        petTemplate.find('.pet-breed').text(data[i].breed);
-        petTemplate.find('.pet-age').text(data[i].age);
-        petTemplate.find('.pet-location').text(data[i].location);
-        petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+        laptopTemplate.find('.panel-title').text(data[i].assetTag);
+        laptopTemplate.find('img').attr('src', data[i].picture);
+        laptopTemplate.find('.laptop-asset-tag').text(data[i].assetTag);
+        laptopTemplate.find('.laptop-user-id').text(data[i].userId);
+        laptopTemplate.find('.btn-edit').attr('data-id', data[i].serialNumber);
 
-        petsRow.append(petTemplate.html());
+        laptopsRow.append(laptopTemplate.html());
       }
     });
 
-    return App.initWeb3();
+    $(document).on('click', '.btn-edit', App.handleAddLaptop);
   },
 
-  initWeb3: function() {
-    /*
-     * Replace me...
-     */
-
-    return App.initContract();
-  },
-
-  initContract: function() {
-    /*
-     * Replace me...
-     */
-
-    return App.bindEvents();
-  },
-
-  bindEvents: function() {
-    $(document).on('click', '.btn-adopt', App.handleAdopt);
-  },
-
-  handleAdopt: function() {
+  handleAddLaptop: function() {
     event.preventDefault();
 
-    var petId = parseInt($(event.target).data('id'));
-
-    /*
-     * Replace me...
-     */
-  },
-
-  markAdopted: function(adopters, account) {
-    /*
-     * Replace me...
-     */
+    var laptopId = parseInt($(event.target).data('id'));
+    window.location = "laptop.html?mode=edit&id=" + laptopId;
   }
 
 };

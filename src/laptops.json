@@ -1,0 +1,37 @@
+[
+  {
+    "serialNumber": "123456",
+    "assetTag": "md12345",
+    "cpu": "Intel Core i7",
+    "hardDrive": "500GB SSD",
+    "userId": "0342232-232323-232323232323"
+  },
+  {
+    "serialNumber": "6573849",
+    "assetTag": "md22222",
+    "cpu": "Intel Core i7",
+    "hardDrive": "500GB SSD",
+    "userId": "0342232-232323-232323232323"
+  },
+  {
+    "serialNumber": "768294",
+    "assetTag": "md33333",
+    "cpu": "Intel Core i7",
+    "hardDrive": "500GB SSD",
+    "userId": "0342232-232323-232323232323"
+  },
+  {
+    "serialNumber": "238496",
+    "assetTag": "md444444",
+    "cpu": "Intel Core i7",
+    "hardDrive": "500GB SSD",
+    "userId": "0342232-232323-232323232323"
+  },
+  {
+    "serialNumber": "48569734",
+    "assetTag": "md555555",
+    "cpu": "Intel Core i7",
+    "hardDrive": "500GB SSD",
+    "userId": "0342232-232323-232323232323"
+  }
+]
