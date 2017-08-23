@@ -59,6 +59,7 @@ var Hardware = {
     },
 
     getDevice: function(contractAddress) {
+        console.log(contractAddress);
         var contract = Hardware.contract.at(contractAddress);
 
         var p1 = contract.serial.call();
