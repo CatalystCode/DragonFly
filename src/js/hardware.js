@@ -29,6 +29,7 @@ var Hardware = {
         });
     },
 
+    
     newDevice: function(serial, assetTag, ramSize, hddSize) {
         return new Promise((resolve, reject) => {
             Hardware.contract.new(serial, assetTag, ramSize, hddSize).then(contract => {
@@ -42,8 +43,8 @@ var Hardware = {
         });
     },
 
-    assignNewAssetTag: function(contractAddress, newAssetTag) {
-        return Hardware.contract.at(contractAddress).assignNewAssetTag(newAssetTag);
+    assignToUser: function(contractAddress, userId) {
+        return Hardware.contract.at(contractAddress).assignToUser(userId);
     }
 };
 
