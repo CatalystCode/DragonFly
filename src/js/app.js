@@ -15,7 +15,8 @@ App = {
         dataType: "json",
         success: function (response) {
             for(var x =0; x < response.length; x++) {
-              Hardware.getDevice(response[x].address).then(function(result){
+              var addr = response[x].address;
+              Hardware.getDevice(addr).then(function(result){
                 // get the laptop details from blockchain
 
                 // [ "serial", "assetTag", 0, 0, "userId"]
@@ -23,7 +24,7 @@ App = {
                   serialNumber: result[0],
                   assetTag: result[1],
                   userId: result[4],
-                  address: response[x].address
+                  address: addr,
                 };  
 
                 App.loadLaptop(laptop);
