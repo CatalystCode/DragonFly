@@ -53,10 +53,14 @@ App = {
     var serialNumber = $("#serialNumberInput").val();
     var assetTag = $("#assetTagInput").val();
     var hardDrive = $("#hardDriveInput").val();
-    var cpu = $("#cpuInput").val();
+    var ram = $("#ramInput").val();
     var userId = $('#userIdSelect').find(":selected").text();
 
-    console.log(serialNumber + assetTag + hardDrive + cpu + userId);
+    Hardware.newDevice(serialNumber, assetTag, ram, hardDrive).then(function(contract){
+      Hardware.assignToUser(contract.address, userId);
+    });
+
+    console.log(serialNumber + assetTag + hardDrive + ram + userId);
   },
 
   markAdopted: function(adopters, account) {
