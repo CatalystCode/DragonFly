@@ -17,6 +17,16 @@ App = {
 
     $(document).on('click', '.btn-submit', App.handleSubmit);
 
+    $.get("http://mdfinancial-backend.azurewebsites.net/api/auth", function(users) {
+      for(let user of users) {
+        $('#userIdSelect')
+          .append($('<option>', {
+          value: user.id,
+          text: user.displayName,
+        }));
+      }
+    });
+
     return App.initWeb3();
   },
 
