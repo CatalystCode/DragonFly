@@ -19,13 +19,17 @@ var Hardware = {
     },
  
     initContract: function() {
-        $.getJSON('Hardware.json', function(data) {
-            // Get the necessary contract artifact file and instantiate it with truffle-contract.
-            var HardwareArtifact = data;
-            Hardware.contract = TruffleContract(HardwareArtifact);
-          
-            // Set the provider for our contract.
-            Hardware.contract.setProvider(Hardware.web3Provider);
+        return new Promise((resolve, reject) => {
+            $.getJSON('Hardware.json', function(data) {
+                // Get the necessary contract artifact file and instantiate it with truffle-contract.
+                var HardwareArtifact = data;
+                Hardware.contract = TruffleContract(HardwareArtifact);
+            
+                // Set the provider for our contract.
+                Hardware.contract.setProvider(Hardware.web3Provider);
+
+                resolve();
+            });
         });
     },
     
@@ -59,7 +63,6 @@ var Hardware = {
     },
 
     getDevice: function(contractAddress) {
-        console.log(contractAddress);
         var contract = Hardware.contract.at(contractAddress);
 
         var p1 = contract.serial.call();
@@ -79,9 +82,8 @@ var Hardware = {
     }
 };
 
-// such a hack
 $(function() {
-    $(window).load(function() {
+    $(window).ready(function() {
       Hardware.init();
     });
-  });
+});

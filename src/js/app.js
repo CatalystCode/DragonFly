@@ -66,7 +66,7 @@ App = {
   handleAddLaptop: function() {
     event.preventDefault();
 
-    var laptopId = parseInt($(event.target).data('id'));
+    var laptopId = encodeURIComponent($(event.target).data('id'));
     window.location = "laptop.html?mode=edit&id=" + laptopId;
   }
 

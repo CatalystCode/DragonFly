@@ -37,7 +37,7 @@ App = {
   initEditLaptop: function() {
     $("#page-title").text("Edit Laptop");
 
-    var id = App.getUrlParameter('id');
+    var id = decodeURIComponent(App.getUrlParameter('id'));
 
     Hardware.getDevice(id).then(function(result){
       // get the laptop details from blockchain
@@ -50,12 +50,12 @@ App = {
         hardDrive: result[3],
         userId: result[4]
       };  
-    });
 
-    $("#serialNumberInput").val(laptop.serialNumber);
-    $("#assetTagInput").val(laptop.assetTag);
-    $("#hardDriveInput").val(laptop.hardDrive);
-    $("#ramInput").val(laptop.ram);
+      $("#serialNumberInput").val(laptop.serialNumber);
+      $("#assetTagInput").val(laptop.assetTag);
+      $("#hardDriveInput").val(laptop.hardDrive);
+      $("#ramInput").val(laptop.ram);
+    });
   },
 
   initWeb3: function() {
