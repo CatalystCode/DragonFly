@@ -46,38 +46,52 @@ var Hardware = {
     },
 
     assignToUser: function(contractAddress, userId) {
-        return Hardware.contract.at(contractAddress).assignToUser(userId);
+        let contract = Hardware.contract.at(contractAddress)
+        if (contract != null) {
+            contract.assignToUser(userId);
+        }
     },
 
     newAssetTag: function(contractAddress, assetTag) {
-        return Hardware.contract.at(contractAddress).assignNewAssetTag(assetTag);
+        let contract = Hardware.contract.at(contractAddress)
+        if (contract != null) {
+            contract.assignNewAssetTag(assetTag);
+        }
     },
 
     updateHardware: function(contractAddress, newRamSize, newHDDSize) {
-        return Hardware.contract.at(contractAddress).updateHardware(newRamSize, newHDDSize);
+        let contract = Hardware.contract.at(contractAddress)
+        if (contract != null) {
+            return contract.updateHardware(newRamSize, newHDDSize);
+        }
     },
 
     freeLaptop: function(contractAddress) {
-        return Hardware.contract.at(contractAddress).freeLaptop();
+        let contract = Hardware.contract.at(contractAddress)
+        if (contract != null) {
+            return contract.freeLaptop();
+        }
     },
 
     getDevice: function(contractAddress) {
         var contract = Hardware.contract.at(contractAddress);
 
-        var p1 = contract.serial.call();
-        var p2 = contract.assetTag.call();
-        var p3 = contract.ramSize.call();
-        var p4 = contract.hddSize.call();
-        var p5 = contract.userid.call();
+        if (contract != null) {
+            var p1 = contract.serial.call();
+            var p2 = contract.assetTag.call();
+            var p3 = contract.ramSize.call();
+            var p4 = contract.hddSize.call();
+            var p5 = contract.userid.call();
 
-        return Promise.all([p1, p2, p3, p4, p5]).then(values => { 
-            // oh my god. I'm so sorry.
-            values[2] = values[2].toNumber();
-            values[3] = values[3].toNumber();
+            return Promise.all([p1, p2, p3, p4, p5]).then(values => { 
+                // oh my god. I'm so sorry.
+                values[2] = values[2].toNumber();
+                values[3] = values[3].toNumber();
 
-            // [ "serial", "assetTag", 0, 0, "userId"]
-            return values;
-        });
+                // [ "serial", "assetTag", 0, 0, "userId"]
+                return values;
+            });
+        }
     }
 };
 
