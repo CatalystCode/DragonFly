@@ -3,17 +3,19 @@ var Hardware = {
     contract: null, 
   
     init: function() {
-        // Initialize web3 and set the provider to the testRPC.
+        // Checking if Web3 has been injected by the browser (Mist/MetaMask)
         if (typeof web3 !== 'undefined') {
+            // Use Mist/MetaMask's provider
             Hardware.web3Provider = web3.currentProvider;
             web3 = new Web3(web3.currentProvider);
         } else {
-            // set the provider you want from Web3.providers
+            // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+            alert('No web3? You should consider using MetaMask')
             Hardware.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
             web3 = new Web3(Hardware.web3Provider);
-            web3.eth.defaultAccount = web3.eth.accounts[0];
         }
 
+        web3.eth.defaultAccount = web3.eth.accounts[0];
         Hardware.initContract();
     },
  
@@ -33,7 +35,6 @@ var Hardware = {
     },
     
     newDevice: function(serial, assetTag, ramSize, hddSize) {
-        Hardware.init();
         return new Promise((resolve, reject) => {
             Hardware.contract.new(serial, assetTag, ramSize, hddSize).then(contract => {
                 if (!contract.address) {
@@ -47,7 +48,6 @@ var Hardware = {
     },
 
     assignToUser: function(contractAddress, userId) {
-        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             contract.assignToUser(userId);
@@ -55,7 +55,6 @@ var Hardware = {
     },
 
     newAssetTag: function(contractAddress, assetTag) {
-        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             contract.assignNewAssetTag(assetTag);
@@ -63,7 +62,6 @@ var Hardware = {
     },
 
     updateHardware: function(contractAddress, newRamSize, newHDDSize) {
-        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             return contract.updateHardware(newRamSize, newHDDSize);
@@ -71,7 +69,6 @@ var Hardware = {
     },
 
     freeLaptop: function(contractAddress) {
-        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             return contract.freeLaptop();
@@ -79,7 +76,6 @@ var Hardware = {
     },
 
     getDevice: function(contractAddress) {
-        Hardware.init();
         var contract = Hardware.contract.at(contractAddress);
 
         if (contract != null) {
@@ -102,7 +98,7 @@ var Hardware = {
 };
 
 $(function() {
-    $(window).ready(function() {
+    $(window).load(function() {
       Hardware.init();
     });
 });
