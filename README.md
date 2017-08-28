@@ -6,6 +6,7 @@
 $ npm install -g ethereumjs-testrpc
 $ npm install -g truffle
 $ git clone https://github.com/CatalystCode/DragonFly.git
+$ cd DragonFly
 $ npm install
 ```
 
