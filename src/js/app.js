@@ -29,7 +29,7 @@ App = {
 
                 App.loadLaptop(laptop);
 
-              }, function(err){console.log(err);});
+              }, function(err){console.log("Failed retrieving laptop from blockchain.");});
             }
         },
         error: function (xhr, status) {
