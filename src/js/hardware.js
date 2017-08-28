@@ -33,6 +33,7 @@ var Hardware = {
     },
     
     newDevice: function(serial, assetTag, ramSize, hddSize) {
+        Hardware.init();
         return new Promise((resolve, reject) => {
             Hardware.contract.new(serial, assetTag, ramSize, hddSize).then(contract => {
                 if (!contract.address) {
@@ -46,6 +47,7 @@ var Hardware = {
     },
 
     assignToUser: function(contractAddress, userId) {
+        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             contract.assignToUser(userId);
@@ -53,6 +55,7 @@ var Hardware = {
     },
 
     newAssetTag: function(contractAddress, assetTag) {
+        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             contract.assignNewAssetTag(assetTag);
@@ -60,6 +63,7 @@ var Hardware = {
     },
 
     updateHardware: function(contractAddress, newRamSize, newHDDSize) {
+        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             return contract.updateHardware(newRamSize, newHDDSize);
@@ -67,6 +71,7 @@ var Hardware = {
     },
 
     freeLaptop: function(contractAddress) {
+        Hardware.init();
         let contract = Hardware.contract.at(contractAddress)
         if (contract != null) {
             return contract.freeLaptop();
@@ -74,6 +79,7 @@ var Hardware = {
     },
 
     getDevice: function(contractAddress) {
+        Hardware.init();
         var contract = Hardware.contract.at(contractAddress);
 
         if (contract != null) {
