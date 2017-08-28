@@ -26,20 +26,20 @@ App = {
         }));
       }
     });
-
-    return App.initWeb3();
   },
 
   initAddLaptop: function() {
     $("#page-title").text("Add Laptop");
+    App.mode = "add";
   },
 
   initEditLaptop: function() {
     $("#page-title").text("Edit Laptop");
+    App.mode = "edit";
 
-    var id = decodeURIComponent(App.getUrlParameter('id'));
+    var address = App.getLaptopContractAddress();
 
-    Hardware.getDevice(id).then(function(result){
+    Hardware.getDevice(address).then(function(result){
       // get the laptop details from blockchain
 
       // [ "serial", "assetTag", 0, 0, "userId"]
@@ -52,24 +52,19 @@ App = {
       };  
 
       $("#serialNumberInput").val(laptop.serialNumber);
+      $("#serialNumberInput").prop('disabled', true);
       $("#assetTagInput").val(laptop.assetTag);
+      $("#assetTagInput").prop('disabled', true);
       $("#hardDriveInput").val(laptop.hardDrive);
       $("#ramInput").val(laptop.ram);
+      $("#userIdSelect option").filter(function() {
+          return this.text == laptop.userId; 
+      }).attr('selected', true);
     });
   },
 
-  initWeb3: function() {
-    /*
-     * Replace me...
-     */
-
-    return App.initContract();
-  },
-
-  initContract: function() {
-    /*
-     * Replace me...
-     */
+  getLaptopContractAddress() {
+    return decodeURIComponent(App.getUrlParameter('id'));
   },
 
   handleSubmit: function() {
@@ -82,21 +77,19 @@ App = {
     var userId = $('#userIdSelect').find(":selected").text();
 
     if(App.mode == "edit") {
-      
+      var address = App.getLaptopContractAddress();
+      Hardware.updateHardware(address, ram, hardDrive).then(function(contract){
+        Hardware.assignToUser(address, userId);
+      });
     } else {
       Hardware.newDevice(serialNumber, assetTag, ram, hardDrive).then(function(contract){
         Hardware.assignToUser(contract.address, userId);
+        // add the laptop to mongodb
         $.post( "http://mdfinancial-backend.azurewebsites.net/api/assets", { address: contract.address } );
       });
     }
 
     console.log(serialNumber + assetTag + hardDrive + ram + userId);
-  },
-
-  markAdopted: function(adopters, account) {
-    /*
-     * Replace me...
-     */
   },
 
   getUrlParameter: function(name) {
