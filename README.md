@@ -23,6 +23,6 @@ $ npm install
 
 1. Run the application
     ```bash
-    $ `npm run dev`
+    $ npm run dev
     ```
 2. Open chrome to `http://localhost:3000`

@@ -11,9 +11,8 @@ var Hardware = {
             // set the provider you want from Web3.providers
             Hardware.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
             web3 = new Web3(Hardware.web3Provider);
+            web3.eth.defaultAccount = web3.eth.accounts[0];
         }
-
-        web3.eth.defaultAccount = web3.eth.accounts[0];
 
         Hardware.initContract();
     },
