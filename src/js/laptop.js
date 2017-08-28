@@ -57,9 +57,7 @@ App = {
       $("#assetTagInput").prop('disabled', true);
       $("#hardDriveInput").val(laptop.hardDrive);
       $("#ramInput").val(laptop.ram);
-      $("#userIdSelect option").filter(function() {
-          return this.text == laptop.userId; 
-      }).attr('selected', true);
+      $("#userIdSelect option:contains('" + laptop.userId + "')").attr('selected', 'selected');
     });
   },
 
