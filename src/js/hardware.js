@@ -1,7 +1,6 @@
 var Hardware = {
     web3Provider: null,
-    contract: null, 
-  
+
     init: function() {
         // Checking if Web3 has been injected by the browser (Mist/MetaMask)
         if (typeof web3 !== 'undefined') {
@@ -16,24 +15,22 @@ var Hardware = {
         }
 
         web3.eth.defaultAccount = web3.eth.accounts[0];
-        Hardware.initContract();
     },
- 
-    initContract: function() {
+
+    getContract: function() {
         return new Promise((resolve, reject) => {
             $.getJSON('Hardware.json', function(data) {
                 // Get the necessary contract artifact file and instantiate it with truffle-contract.
-                var HardwareArtifact = data;
-                Hardware.contract = TruffleContract(HardwareArtifact);
-            
-                // Set the provider for our contract.
-                Hardware.contract.setProvider(Hardware.web3Provider);
+                let contract = TruffleContract(data);
 
-                resolve();
+                // Set the provider for our contract.
+                contract.setProvider(Hardware.web3Provider);
+
+                resolve(contract);
             });
         });
     },
-    
+
     newDevice: function(serial, assetTag, ramSize, hddSize) {
         return new Promise((resolve, reject) => {
             Hardware.contract.new(serial, assetTag, ramSize, hddSize).then(contract => {
@@ -76,24 +73,29 @@ var Hardware = {
     },
 
     getDevice: function(contractAddress) {
-        var contract = Hardware.contract.at(contractAddress);
+        return this.getContract(contractAddress)
+            .then(contract => {
+                contract = contract.at(contractAddress);
 
-        if (contract != null) {
-            var p1 = contract.serial.call();
-            var p2 = contract.assetTag.call();
-            var p3 = contract.ramSize.call();
-            var p4 = contract.hddSize.call();
-            var p5 = contract.userid.call();
+                if (!contract) {
+                    return;
+                }
 
-            return Promise.all([p1, p2, p3, p4, p5]).then(values => { 
-                // oh my god. I'm so sorry.
-                values[2] = values[2].toNumber();
-                values[3] = values[3].toNumber();
+                var p1 = contract.serial.call();
+                var p2 = contract.assetTag.call();
+                var p3 = contract.ramSize.call();
+                var p4 = contract.hddSize.call();
+                var p5 = contract.userid.call();
 
-                // [ "serial", "assetTag", 0, 0, "userId"]
-                return values;
-            });
-        }
+                return Promise.all([p1, p2, p3, p4, p5]).then(values => {
+                    // oh my god. I'm so sorry.
+                    values[2] = values[2].toNumber();
+                    values[3] = values[3].toNumber();
+
+                    // [ "serial", "assetTag", 0, 0, "userId"]
+                    return values;
+                });
+            })
     }
 };
 
