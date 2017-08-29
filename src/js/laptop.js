@@ -5,25 +5,25 @@ App = {
 
   init: function() {
     // figure out the page state
-    var mode = App.getUrlParameter('mode');
-    switch(mode) {
-      case "edit": 
-      App.initEditLaptop();
-      break;
-      default: 
-      App.initAddLaptop();
-      break;
-    }
-
     $(document).on('click', '.btn-submit', App.handleSubmit);
 
     $.get("http://mdfinancial-backend.azurewebsites.net/api/auth", function(users) {
       for(let user of users) {
         $('#userIdSelect')
           .append($('<option>', {
-          value: user.id,
+          value: user.displayName,
           text: user.displayName,
         }));
+      }
+
+      var mode = App.getUrlParameter('mode');
+      switch(mode) {
+        case "edit":
+        App.initEditLaptop();
+        break;
+        default:
+        App.initAddLaptop();
+        break;
       }
     });
   },
@@ -49,15 +49,16 @@ App = {
         ram: result[2],
         hardDrive: result[3],
         userId: result[4]
-      };  
+      };
 
+      console.log(laptop)
       $("#serialNumberInput").val(laptop.serialNumber);
       $("#serialNumberInput").prop('disabled', true);
       $("#assetTagInput").val(laptop.assetTag);
       $("#assetTagInput").prop('disabled', true);
       $("#hardDriveInput").val(laptop.hardDrive);
       $("#ramInput").val(laptop.ram);
-      $("#userIdSelect option:contains('" + laptop.userId + "')").attr('selected', 'selected');
+      $("#userIdSelect").val(laptop.userId);
     });
   },
 
