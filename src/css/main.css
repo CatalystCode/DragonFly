@@ -1,0 +1,15 @@
+body {
+    background-image: url("/images/md-logo.jpg");
+    background-repeat: no-repeat;
+    background-size: 120px 120px;
+    background-position: right 10px top 10px;
+}
+
+.add-laptop-button {
+    margin: 15px;
+}
+
+.md-logo {
+    margin: 20px;
+    width: 120px;
+}
