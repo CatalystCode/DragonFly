@@ -17,7 +17,7 @@ var Hardware = {
     this.contract.setProvider(this.web3Provider)
   },
 
-  getJSON: (url) => {
+  getJSON: function (url) {
     return new Promise((resolve, reject) => {
       $.getJSON(url, function (data) {
         if (!data) {
