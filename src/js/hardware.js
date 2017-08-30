@@ -18,39 +18,23 @@ var Hardware = {
   },
 
   newDevice: function (serial, assetTag, ramSize, hddSize, userId) {
-    let self = this
     return this.contract.new(serial, assetTag, ramSize, hddSize)
       .then((deploydContract) => {
         return deploydContract.assignToUser(userId)
-          .then(() => {
-            return self.getDevice(deploydContract.address)
-          })
+          .then(() => Promise.resolve(deploydContract.address))
       })
-      .catch((err) => {
-        return Promise.reject(err)
-      })
+      .catch((err) => Promise.reject(err))
   },
 
   updateHardware: function (contractAddress, newRamSize, newHDDSize, userId) {
-    let self = this
     let contract = this.contract.at(contractAddress)
     return contract.updateHardware(newRamSize, newHDDSize)
-      .then(() => {
-        return contract.assignToUser(userId)
-          .then(() => {
-            return self.getDevice(contractAddress)
-          })
-      })
-      .catch((err) => {
-        return Promise.reject(err)
-      })
+      .then(() => contract.assignToUser(userId))
+      .catch((err) => Promise.reject(err))
   },
 
   getDevice: function (contractAddress) {
     let contract = this.contract.at(contractAddress)
-    if (!contract) {
-      return Promise.reject(new Error('Address does not exists'))
-    }
 
     let p = [
       contract.serial.call(),
