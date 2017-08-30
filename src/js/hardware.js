@@ -17,17 +17,6 @@ var Hardware = {
     this.contract.setProvider(this.web3Provider)
   },
 
-  getJSON: function (url) {
-    return new Promise((resolve, reject) => {
-      $.getJSON(url, function (data) {
-        if (!data) {
-          return reject(new Error('Was not able to fetch data'))
-        }
-        resolve(data)
-      })
-    })
-  },
-
   newDevice: function (serial, assetTag, ramSize, hddSize, userId) {
     let self = this
     return this.contract.new(serial, assetTag, ramSize, hddSize)
@@ -63,60 +52,23 @@ var Hardware = {
       return Promise.reject(new Error('Address does not exists'))
     }
 
-    let p1 = contract.serial.call()
-    let p2 = contract.assetTag.call()
-    let p3 = contract.ramSize.call()
-    let p4 = contract.hddSize.call()
-    let p5 = contract.userid.call()
+    let p = [
+      contract.serial.call(),
+      contract.assetTag.call(),
+      contract.ramSize.call(),
+      contract.hddSize.call(),
+      contract.userid.call()]
 
-    return Promise.all([p1, p2, p3, p4, p5]).then(values => {
-      return {
-        serialNumber: values[0] || 'Not found',
-        assetTag: values[1] || 'Not found',
-        ram: values[2] ? values[2].toNumber() : 'Not found',
-        hardDrive: values[3] ? values[3].toNumber() : 'Not found',
-        userId: values[4] || 'Not found',
-        address: contractAddress
-      }
-    })
+    return Promise.all(p)
+      .then(values => {
+        return {
+          serialNumber: values[0] || 'Not found',
+          assetTag: values[1] || 'Not found',
+          ram: values[2] ? values[2].toNumber() : 'Not found',
+          hardDrive: values[3] ? values[3].toNumber() : 'Not found',
+          userId: values[4] || 'Not found',
+          address: contractAddress
+        }
+      })
   }
-}
-
-const testNewDeviceSunny = (hw) => {
-  console.log('Testing testNewDeviceSunny')
-  hw.newDevice('serialNumber', 'assetTag', 16, 256, 'userid')
-    .then((res) => {
-      console.log('Success')
-      console.log(res)
-    })
-    .catch((err) => {
-      console.log('Error')
-      console.log(err)
-    })
-}
-
-const testUpdateHardware = (hw, addr) => {
-  console.log('Testing testUpdateHardware')
-  hw.updateHardware(addr, 32, 512, 'userid12')
-    .then((res) => {
-      console.log('Success')
-      console.log(res)
-    })
-    .catch((err) => {
-      console.log('Error')
-      console.log(err)
-    })
-}
-
-const testGetDevice = (hw, addr) => {
-  console.log('Testing testGetDevice')
-  hw.getDevice(addr)
-    .then((res) => {
-      console.log('Success')
-      console.log(res)
-    })
-    .catch((err) => {
-      console.log('Error')
-      console.log(err)
-    })
 }
