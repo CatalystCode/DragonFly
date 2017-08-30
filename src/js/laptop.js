@@ -4,27 +4,35 @@ App = {
   mode: 'add',
 
   init: function () {
-    // figure out the page state
-    $(document).on('click', '.btn-submit', App.handleSubmit)
+    $(document).on('click', '.btn-submit', App.handleSubmit(this))
 
-    $.get('http://mdfinancial-backend.azurewebsites.net/api/auth', function (users) {
-      for (let user of users) {
-        $('#userIdSelect')
-          .append($('<option>', {
-            value: user.displayName,
-            text: user.displayName
-          }))
-      }
+    this.getAADUsers('http://mdfinancial-backend.azurewebsites.net/api/auth')
+      .then(users => {
+        console.log('users', users)
+        users.map(user => {
+          $('#userIdSelect')
+            .append($('<option>', {
+              value: user.displayName,
+              text: user.displayName
+            }))
+        })
 
-      var mode = App.getUrlParameter('mode')
-      switch (mode) {
-        case 'edit':
-          App.initEditLaptop()
-          break
-        default:
-          App.initAddLaptop()
-          break
-      }
+        let mode = App.getUrlParameter('mode')
+        switch (mode) {
+          case 'edit':
+            App.initEditLaptop()
+            break
+          default:
+            App.initAddLaptop()
+            break
+        }
+      })
+  },
+
+  getAADUsers: function (url) {
+    return new Promise((resolve, reject) => {
+      $.get(url, resolve)
+        .fail(reject)
     })
   },
 
@@ -38,57 +46,58 @@ App = {
     App.mode = 'edit'
 
     var address = App.getLaptopContractAddress()
-
-    Hardware.getDevice(address).then(function (result) {
-      // get the laptop details from blockchain
-
-      // [ "serial", "assetTag", 0, 0, "userId"]
-      var laptop = {
-        serialNumber: result[0],
-        assetTag: result[1],
-        ram: result[2],
-        hardDrive: result[3],
-        userId: result[4]
-      }
-
-      console.log(laptop)
-      $('#serialNumberInput').val(laptop.serialNumber)
-      $('#serialNumberInput').prop('disabled', true)
-      $('#assetTagInput').val(laptop.assetTag)
-      $('#assetTagInput').prop('disabled', true)
-      $('#hardDriveInput').val(laptop.hardDrive)
-      $('#ramInput').val(laptop.ram)
-      $('#userIdSelect').val(laptop.userId)
+    let self = this
+    Hardware.getDevice(address).then(function (laptop) {
+      self.setLaptopValues(laptop)
     })
+  },
+
+  setLaptopValues: function (laptop) {
+    console.log(laptop)
+    $('#serialNumberInput').val(laptop.serialNumber)
+    $('#serialNumberInput').prop('disabled', true)
+    $('#assetTagInput').val(laptop.assetTag)
+    $('#assetTagInput').prop('disabled', true)
+    $('#hardDriveInput').val(laptop.hardDrive)
+    $('#ramInput').val(laptop.ram)
+    $('#userIdSelect').val(laptop.userId)
   },
 
   getLaptopContractAddress () {
     return decodeURIComponent(App.getUrlParameter('id'))
   },
 
-  handleSubmit: function () {
-    event.preventDefault()
+  handleSubmit: function (self) {
+    return function () {
+      event.preventDefault()
 
-    var serialNumber = $('#serialNumberInput').val()
-    var assetTag = $('#assetTagInput').val()
-    var hardDrive = $('#hardDriveInput').val()
-    var ram = $('#ramInput').val()
-    var userId = $('#userIdSelect').find(':selected').text()
+      let laptop = {
+        serialNumber: $('#serialNumberInput').val(),
+        assetTag: $('#assetTagInput').val(),
+        hardDrive: $('#hardDriveInput').val(),
+        ram: $('#ramInput').val(),
+        userId: $('#userIdSelect').find(':selected').val()
+      }
 
-    if (App.mode == 'edit') {
-      var address = App.getLaptopContractAddress()
-      Hardware.updateHardware(address, ram, hardDrive).then(function (contract) {
-        Hardware.assignToUser(address, userId)
-      })
-    } else {
-      Hardware.newDevice(serialNumber, assetTag, ram, hardDrive).then(function (contract) {
-        Hardware.assignToUser(contract.address, userId)
-        // add the laptop to mongodb
-        $.post('http://mdfinancial-backend.azurewebsites.net/api/assets', { address: contract.address })
-      })
+      console.log(laptop)
+      if (App.mode === 'edit') {
+        // console.log('Editing laptop')
+        var address = App.getLaptopContractAddress()
+        Hardware.updateHardware(address, laptop.ram, laptop.hardDrive, laptop.userId)
+          .then(function (updatedLaptop) {
+            self.setLaptopValues(updatedLaptop)
+          })
+      } else {
+        // console.log('Creating new laptop')
+        Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
+          .then(function (newLaptop) {
+            self.setLaptopValues(newLaptop)
+
+            // add the laptop to mongodb
+            $.post('http://mdfinancial-backend.azurewebsites.net/api/assets', { address: newLaptop.address })
+          })
+      }
     }
-
-    console.log(serialNumber + assetTag + hardDrive + ram + userId)
   },
 
   getUrlParameter: function (name) {
