@@ -1,106 +1,122 @@
 var Hardware = {
-  web3Provider: null,
-
-  init: function () {
-        // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+  init: function (data) {
+    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
-            // Use Mist/MetaMask's provider
-      Hardware.web3Provider = web3.currentProvider
+      // Use Mist/MetaMask's provider
+      this.web3Provider = web3.currentProvider
       web3 = new Web3(web3.currentProvider)
     } else {
-            // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+      // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       alert('No web3? You should consider using MetaMask')
-      Hardware.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
-      web3 = new Web3(Hardware.web3Provider)
+      window.location.href = 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'
+      return
     }
 
-    web3.eth.defaultAccount = web3.eth.accounts[0]
+    // Get the necessary contract artifact file and instantiate it with truffle-contract.
+    this.contract = TruffleContract(data)
+    this.contract.setProvider(this.web3Provider)
   },
 
-  getContract: function () {
+  getJSON: (url) => {
     return new Promise((resolve, reject) => {
-      $.getJSON('Hardware.json', function (data) {
-                // Get the necessary contract artifact file and instantiate it with truffle-contract.
-        let contract = TruffleContract(data)
-
-                // Set the provider for our contract.
-        contract.setProvider(Hardware.web3Provider)
-
-        resolve(contract)
-      })
-    })
-  },
-
-  newDevice: function (serial, assetTag, ramSize, hddSize) {
-    return new Promise((resolve, reject) => {
-      Hardware.contract.new(serial, assetTag, ramSize, hddSize).then(contract => {
-        if (!contract.address) {
-          console.log('Contract transaction send: TransactionHash: ' + contract.transactionHash + ' waiting to be mined...')
-        } else {
-          console.log('Contract mined! Address: ' + contract.address)
+      $.getJSON(url, function (data) {
+        if (!data) {
+          return reject(new Error('Was not able to fetch data'))
         }
-        resolve(contract)
+        resolve(data)
       })
     })
   },
 
-  assignToUser: function (contractAddress, userId) {
-    let contract = Hardware.contract.at(contractAddress)
-    if (contract != null) {
-      contract.assignToUser(userId)
-    }
+  newDevice: function (serial, assetTag, ramSize, hddSize, userId) {
+    let self = this
+    return this.contract.new(serial, assetTag, ramSize, hddSize)
+      .then((deploydContract) => {
+        return deploydContract.assignToUser(userId)
+          .then(() => {
+            return self.getDevice(deploydContract.address)
+          })
+      })
+      .catch((err) => {
+        return Promise.reject(err)
+      })
   },
 
-  newAssetTag: function (contractAddress, assetTag) {
-    let contract = Hardware.contract.at(contractAddress)
-    if (contract != null) {
-      contract.assignNewAssetTag(assetTag)
-    }
-  },
-
-  updateHardware: function (contractAddress, newRamSize, newHDDSize) {
-    let contract = Hardware.contract.at(contractAddress)
-    if (contract != null) {
-      return contract.updateHardware(newRamSize, newHDDSize)
-    }
-  },
-
-  freeLaptop: function (contractAddress) {
-    let contract = Hardware.contract.at(contractAddress)
-    if (contract != null) {
-      return contract.freeLaptop()
-    }
+  updateHardware: function (contractAddress, newRamSize, newHDDSize, userId) {
+    let self = this
+    let contract = this.contract.at(contractAddress)
+    return contract.updateHardware(newRamSize, newHDDSize)
+      .then(() => {
+        return contract.assignToUser(userId)
+          .then(() => {
+            return self.getDevice(contractAddress)
+          })
+      })
+      .catch((err) => {
+        return Promise.reject(err)
+      })
   },
 
   getDevice: function (contractAddress) {
-    return this.getContract(contractAddress)
-            .then(contract => {
-              contract = contract.at(contractAddress)
+    let contract = this.contract.at(contractAddress)
+    if (!contract) {
+      return Promise.reject(new Error('Address does not exists'))
+    }
 
-              if (!contract) {
-                return
-              }
+    let p1 = contract.serial.call()
+    let p2 = contract.assetTag.call()
+    let p3 = contract.ramSize.call()
+    let p4 = contract.hddSize.call()
+    let p5 = contract.userid.call()
 
-              var p1 = contract.serial.call()
-              var p2 = contract.assetTag.call()
-              var p3 = contract.ramSize.call()
-              var p4 = contract.hddSize.call()
-              var p5 = contract.userid.call()
-
-              return Promise.all([p1, p2, p3, p4, p5]).then(values => {
-                    // oh my god. I'm so sorry.
-                values[2] = values[2].toNumber()
-                values[3] = values[3].toNumber()
-
-                    // [ "serial", "assetTag", 0, 0, "userId"]
-                return values
-              })
-            })
+    return Promise.all([p1, p2, p3, p4, p5]).then(values => {
+      return {
+        serialNumber: values[0] || 'Not found',
+        assetTag: values[1] || 'Not found',
+        ram: values[2] ? values[2].toNumber() : 'Not found',
+        hardDrive: values[3] ? values[3].toNumber() : 'Not found',
+        userId: values[4] || 'Not found',
+        address: contractAddress
+      }
+    })
   }
 }
 
-// $(function() {
-//     $(window).load(function() {
-//       Hardware.init();
-//     });
-// });
+const testNewDeviceSunny = (hw) => {
+  console.log('Testing testNewDeviceSunny')
+  hw.newDevice('serialNumber', 'assetTag', 16, 256, 'userid')
+    .then((res) => {
+      console.log('Success')
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log('Error')
+      console.log(err)
+    })
+}
+
+const testUpdateHardware = (hw, addr) => {
+  console.log('Testing testUpdateHardware')
+  hw.updateHardware(addr, 32, 512, 'userid12')
+    .then((res) => {
+      console.log('Success')
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log('Error')
+      console.log(err)
+    })
+}
+
+const testGetDevice = (hw, addr) => {
+  console.log('Testing testGetDevice')
+  hw.getDevice(addr)
+    .then((res) => {
+      console.log('Success')
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log('Error')
+      console.log(err)
+    })
+}
