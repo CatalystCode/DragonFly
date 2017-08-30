@@ -1,50 +1,34 @@
 App = {
+  backendUrl: 'https://mdfinancial-backend.azurewebsites.net/api/assets',
 
   init: function () {
-    // Load laptops.
-    /*
-    $.get( "http://mdfinancial-backend.azurewebsites.net/api/assets", function(laptops) {
-      console.log(laptops);
-    });
-    */
-    $.ajax({
-      url: 'http://mdfinancial-backend.azurewebsites.net/api/assets',
-      type: 'GET',
-      crossDomain: true,
-      dataType: 'json',
-      success: function (response) {
-        for (var x = 0; x < response.length; x++) {
-          var addr = response[x].address
-          Hardware.getDevice(addr).then(function (result) {
-                // get the laptop details from blockchain
-
-                // [ "serial", "assetTag", 0, 0, "userId"]
-            var laptop = {
-              serialNumber: result[0],
-              assetTag: result[1],
-              userId: result[4],
-              address: addr
-            }
-
-            App.loadLaptop(laptop)
-          }, function (err) { console.log('Failed retrieving laptop from blockchain.') })
-        }
-      },
-      error: function (xhr, status) {
-        alert('error')
-      }
-    })
+    this.getContractAddresses(this.backendUrl)
+      .then(results => {
+        results.map(res => {
+          Hardware.getDevice(res.address)
+            .then(App.loadLaptop)
+            .catch(err => console.log('Failed to get error'))
+        })
+      })
+      .catch(err => alert('Failed to get Assets'))
 
     $(document).on('click', '.btn-edit', App.handleAddLaptop)
   },
 
+  getContractAddresses: function (url) {
+    return new Promise((resolve, reject) => {
+      $.get(url, resolve)
+        .fail(reject)
+    })
+  },
+
   loadLaptop: function (laptop) {
     // load the template
-    var laptopsRow = $('#laptopsRow')
-    var laptopTemplate = $('#laptopTemplate')
+    let laptopsRow = $('#laptopsRow')
+    let laptopTemplate = $('#laptopTemplate')
 
-    var r = Math.floor((Math.random() * 100) + 1)
-    var img = '/images/SurfaceBook_Office_V2.jpg'
+    let r = Math.floor((Math.random() * 100) + 1)
+    let img = '/images/SurfaceBook_Office_V2.jpg'
     if (r % 3 == 0) {
       img = '/images/hp.png'
     } else if (r % 2 == 0) {
@@ -61,10 +45,9 @@ App = {
   },
 
   handleAddLaptop: function () {
-    event.preventDefault()
-
-    var laptopId = encodeURIComponent($(event.target).data('id'))
+    let laptopId = encodeURIComponent($(event.target).data('id'))
     window.location = 'laptop.html?mode=edit&id=' + laptopId
+    return event.preventDefault()
   }
 
 }
@@ -78,3 +61,15 @@ $(() => {
       })
   })
 })
+
+const getContractAddressesTest = (App, url) => {
+  App.getContractAddresses(url)
+    .then(res => {
+      console.log('Success')
+      console.log(res)
+    })
+    .catch(err => {
+      console.log('err')
+      console.error(err)
+    })
+}
