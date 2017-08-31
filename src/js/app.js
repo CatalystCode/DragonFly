@@ -15,12 +15,15 @@ App = {
   },
 
   loadLaptop: function (laptop) {
+    console.log('laptop meta', laptop)
     let laptopTemplate = $('#laptopTemplate')
     laptopTemplate.find('.panel-laptop').attr('_id', laptop._id)
     laptopTemplate.find('.panel-title').text(laptop.assetTag)
     laptopTemplate.find('img').attr('src', laptop.img)
     laptopTemplate.find('.laptop-asset-tag').text(laptop.assetTag)
     laptopTemplate.find('.laptop-user-id').text(laptop.userId)
+    laptopTemplate.find('.laptop-hard-drive').text(laptop.hardDrive)
+    laptopTemplate.find('.laptop-memory').text(laptop.ram)
     laptopTemplate.find('.btn-edit').attr('data-id', laptop.address)
 
     $('#laptopsRow').append(laptopTemplate.html())
