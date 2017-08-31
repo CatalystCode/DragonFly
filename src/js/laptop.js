@@ -2,11 +2,8 @@ App = {
   mode: 'add',
 
   init: function () {
-    $(document).on('click', '.btn-submit', this.handleSubmit)
-
     Util.getRequest(Util.getUsersUrl())
       .then(users => {
-        console.log('users', users)
         users.map(user => {
           $('#userIdSelect')
             .append($('<option>', {
@@ -29,14 +26,17 @@ App = {
 
   initAddLaptop: function () {
     $('#page-title').text('Add Laptop')
+    $(document).on('click', '.btn-submit', this.handleAddLaptop(this))
+
     this.mode = 'add'
   },
 
   initEditLaptop: function () {
     $('#page-title').text('Edit Laptop')
-    this.mode = 'edit'
+    $(document).on('click', '.btn-submit', this.handleEditLaptop(this))
 
-    var address = this.getLaptopContractAddress()
+    this.mode = 'edit'
+    var address = decodeURIComponent(Util.getUrlParameter('id'))
     let self = this
     Hardware.getDevice(address).then(function (laptop) {
       self.setLaptopValues(laptop)
@@ -53,45 +53,47 @@ App = {
     $('#userIdSelect').val(laptop.userId)
   },
 
-  getLaptopContractAddress () {
-    return decodeURIComponent(Util.getUrlParameter('id'))
-  },
-
-  handleSubmit: function () {
-    $('#submit-btn').prop('disabled', true)
-
-    let laptop = {
+  getLaptopValues: function () {
+    return {
       serialNumber: $('#serialNumberInput').val(),
       assetTag: $('#assetTagInput').val(),
       hardDrive: $('#hardDriveInput').val(),
       ram: $('#ramInput').val(),
       userId: $('#userIdSelect').find(':selected').val()
     }
+  },
 
-    console.log(laptop)
-    if (this.mode === 'edit') {
-      console.log('Editing laptop')
-      var address = this.getLaptopContractAddress()
+  handleAddLaptop: function (self) {
+    return function (event) {
+      $('#submit-btn').prop('disabled', true)
+      let laptop = self.getLaptopValues()
+      Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
+      .then(function (address) {
+        Util.postRequest(Util.getAssetsUrl(), { address: address, img: Util.getRandomLaptopImage() })
+          .then(Util.navigateHome)
+      })
+      .catch(self.handleError)
+
+      return event.preventDefault()
+    }
+  },
+
+  handleEditLaptop: function (self) {
+    return function (event) {
+      $('#submit-btn').prop('disabled', true)
+      let laptop = self.getLaptopValues()
+      var address = self.getLaptopContractAddress()
       Hardware.updateHardware(address, laptop.ram, laptop.hardDrive, laptop.userId)
         .then(Util.navigateHome)
-        .catch((err) => {
-          $('#submit-btn').prop('disabled', false)
-          alert('Something went wrong, please try again')
-        })
-    } else {
-      console.log('New laptop')
-      Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
-        .then(function (address) {
-          Util.postRequest(Util.getAssetsUrl(), { address: address })
-            .then(Util.navigateHome)
-        })
-        .catch((err) => {
-          $('#submit-btn').prop('disabled', false)
-          alert('Something went wrong, please try again')
-        })
-    }
+        .catch(self.handleError)
 
-    return event.preventDefault()
+      return event.preventDefault()
+    }
+  },
+
+  handleError: function (err) {
+    $('#submit-btn').prop('disabled', false)
+    alert('Something went wrong, please try again')
   }
 }
 

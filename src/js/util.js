@@ -1,7 +1,7 @@
 var Util = {
   baseName: 'https://mdfinancial-backend.azurewebsites.net',
   assetsUrl: '/api/assets',
-  usersUrl: '/api/auth',
+  usersUrl: '/api/users',
   hardwareAbiUrl: 'assets/Hardware.json',
 
   getUsersUrl: function () {
@@ -18,6 +18,17 @@ var Util = {
 
   navigateHome: function () {
     window.location.href = '/'
+  },
+
+  getRandomLaptopImage () {
+    let r = Math.floor((Math.random() * 100) + 1)
+    let img = '/images/SurfaceBook_Office_V2.jpg'
+    if (r % 3 === 0) {
+      img = '/images/hp.png'
+    } else if (r % 2 === 0) {
+      img = '/images/mbp.jpg'
+    }
+    return img
   },
 
   getUrlParameter: function (name) {
