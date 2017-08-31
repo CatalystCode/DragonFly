@@ -1,5 +1,5 @@
 App = {
-  mode: 'add',
+  editMode: 'edit',
 
   init: function () {
     Util.getRequest(Util.getUsersUrl())
@@ -12,35 +12,24 @@ App = {
             }))
         })
 
-        let mode = Util.getUrlParameter('mode')
-        switch (mode) {
-          case 'edit':
-            this.initEditLaptop()
-            break
-          default:
-            this.initAddLaptop()
-            break
-        }
+        Util.getUrlParameter('mode') === this.editMode ? this.initEditLaptop() : this.initAddLaptop()
       })
   },
 
   initAddLaptop: function () {
     $('#page-title').text('Add Laptop')
     $(document).on('click', '.btn-submit', this.handleAddLaptop(this))
-
-    this.mode = 'add'
   },
 
   initEditLaptop: function () {
     $('#page-title').text('Edit Laptop')
     $(document).on('click', '.btn-submit', this.handleEditLaptop(this))
 
-    this.mode = 'edit'
-    this.address = decodeURIComponent(Util.getUrlParameter('id'))
     let self = this
-    Hardware.getDevice(this.address).then(function (laptop) {
-      self.setLaptopValues(laptop)
-    })
+    this.address = decodeURIComponent(Util.getUrlParameter('id'))
+    Hardware.getDevice(this.address)
+      .then(self.setLaptopValues)
+      .catch(self.handleError)
   },
 
   setLaptopValues: function (laptop) {
@@ -67,12 +56,11 @@ App = {
     return function (event) {
       $('#submit-btn').prop('disabled', true)
       let laptop = self.getLaptopValues()
+
       Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
-      .then(function (address) {
-        Util.postRequest(Util.getAssetsUrl(), { address: address, img: Util.getRandomLaptopImage() })
-          .then(Util.navigateHome)
-      })
-      .catch(self.handleError)
+        .then((address) => Util.postRequest(Util.getAssetsUrl(), { address: address, img: Util.getRandomLaptopImage() }))
+        .then(Util.navigateHome)
+        .catch(self.handleError)
 
       return event.preventDefault()
     }
