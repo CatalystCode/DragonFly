@@ -1,26 +1,13 @@
 var Hardware = {
   init: function (data) {
-    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-    if (typeof web3 !== 'undefined') {
-      // Use Mist/MetaMask's provider
-      this.web3Provider = web3.currentProvider
-      web3 = new Web3(web3.currentProvider)
-    } else {
-      // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-      alert('No web3? You should consider using MetaMask')
-      window.location.href = 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'
-      return
-    }
-
-    // Get the necessary contract artifact file and instantiate it with truffle-contract.
     this.contract = TruffleContract(data)
-    this.contract.setProvider(this.web3Provider)
+    this.contract.setProvider(new Web3.providers.HttpProvider(Util.getRPCUrl()))
   },
 
   newDevice: function (serial, assetTag, ramSize, hddSize, userId) {
-    return this.contract.new(serial, assetTag, ramSize, hddSize)
+    return this.contract.new(serial, assetTag, ramSize, hddSize, Util.getTransactionOption())
       .then((deploydContract) => {
-        return deploydContract.assignToUser(userId)
+        return deploydContract.assignToUser(userId, Util.getTransactionOption())
           .then(() => Promise.resolve(deploydContract.address))
       })
       .catch((err) => Promise.reject(err))
@@ -28,8 +15,8 @@ var Hardware = {
 
   updateHardware: function (contractAddress, newRamSize, newHDDSize, userId) {
     let contract = this.contract.at(contractAddress)
-    return contract.updateHardware(newRamSize, newHDDSize)
-      .then(() => contract.assignToUser(userId))
+    return contract.updateHardware(newRamSize, newHDDSize, Util.getTransactionOption())
+      .then(() => contract.assignToUser(userId, Util.getTransactionOption()))
       .catch((err) => Promise.reject(err))
   },
 

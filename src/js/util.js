@@ -2,7 +2,12 @@ var Util = {
   baseName: 'https://mdfinancial-backend.azurewebsites.net',
   assetsUrl: '/api/assets',
   usersUrl: '/api/users',
+  gethProxy: '/api/geth',
   hardwareAbiUrl: 'assets/Hardware.json',
+
+  accountAddress: '0xae57095f12fb7e760532eea08486153497f42430',
+  gasLimit: 999999,
+  gasPrice: 30000000,
 
   getUsersUrl: function () {
     return this.baseName + this.usersUrl
@@ -12,12 +17,24 @@ var Util = {
     return this.baseName + this.assetsUrl
   },
 
+  getRPCUrl: function () {
+    return this.baseName + this.gethProxy
+  },
+
   getHardwareAbiUrl: function () {
     return this.hardwareAbiUrl
   },
 
   navigateHome: function () {
     window.location.href = '/'
+  },
+
+  getTransactionOption: function () {
+    return {
+      from: this.accountAddress,
+      gas: this.gasLimit,
+      gasPrice: this.gasPrice
+    }
   },
 
   compareLaptops: function (a, b) {
