@@ -6,10 +6,10 @@ App = {
         results.sort(Util.compareLaptops).map(res => {
           Hardware.getDevice(res.address)
             .then(laptop => self.loadLaptop(Object.assign(laptop, res)))
-            .catch(err => console.log('Failed to get error'))
+            .catch(err => console.log('Failed to get contract info error'))
         })
       })
-      .catch(err => alert('Failed to get Assets'))
+      .catch(Util.sendAlert())
 
     $(document).on('click', '.btn-edit', this.handleAddLaptop)
   },
@@ -39,4 +39,5 @@ $(window).ready(() => {
       Hardware.init(data)
       App.init()
     })
+    .catch(Util.sendAlert())
 })

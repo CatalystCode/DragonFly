@@ -37,6 +37,14 @@ var Util = {
     }
   },
 
+  sendAlert: function () {
+    return function (err) {
+      Util.stopSpinner()
+      console.error(err)
+      alert('Something went wrong, please try again.\nYou can open console for more info.')
+    }
+  },
+
   compareLaptops: function (a, b) {
     return a.address > b.address
   },

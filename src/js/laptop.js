@@ -14,6 +14,7 @@ App = {
 
         Util.getUrlParameter('mode') === this.editMode ? this.initEditLaptop() : this.initAddLaptop()
       })
+      .catch(Util.sendAlert())
   },
 
   initAddLaptop: function () {
@@ -29,7 +30,7 @@ App = {
     this.address = decodeURIComponent(Util.getUrlParameter('id'))
     Hardware.getDevice(this.address)
       .then(self.setLaptopValues)
-      .catch(self.handleError)
+      .catch(Util.sendAlert())
   },
 
   setLaptopValues: function (laptop) {
@@ -60,7 +61,7 @@ App = {
       Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
         .then((contract) => Util.postRequest(Util.getAssetsUrl(), { address: contract.address, img: Util.getRandomLaptopImage() }))
         .then(Util.navigateHome)
-        .catch(self.handleError)
+        .catch(Util.sendAlert())
 
       return event.preventDefault()
     }
@@ -72,15 +73,10 @@ App = {
       let laptop = self.getLaptopValues()
       Hardware.updateHardware(self.address, laptop.ram, laptop.hardDrive, laptop.userId)
         .then(Util.navigateHome)
-        .catch(self.handleError)
+        .catch(Util.sendAlert())
 
       return event.preventDefault()
     }
-  },
-
-  handleError: function (err) {
-    Util.stopSpinner()
-    alert('Something went wrong, please try again')
   }
 }
 
@@ -90,4 +86,5 @@ $(window).ready(() => {
       Hardware.init(data)
       App.init()
     })
+    .catch(Util.sendAlert())
 })
