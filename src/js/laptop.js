@@ -58,7 +58,7 @@ App = {
       let laptop = self.getLaptopValues()
 
       Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
-        .then((address) => Util.postRequest(Util.getAssetsUrl(), { address: address, img: Util.getRandomLaptopImage() }))
+        .then((contract) => Util.postRequest(Util.getAssetsUrl(), { address: contract.address, img: Util.getRandomLaptopImage() }))
         .then(Util.navigateHome)
         .catch(self.handleError)
 

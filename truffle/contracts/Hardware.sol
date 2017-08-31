@@ -9,30 +9,23 @@ contract Hardware {
     uint public hddSize;
     string public userid;
 
-    function Hardware(string _serial, string _assetTag, uint _ramSize, uint _hddSize) {
+    function Hardware(string _serial, string _assetTag, uint _ramSize, uint _hddSize, string _userid) {
         _owner = msg.sender;
-
         serial = _serial;
         assetTag = _assetTag;
         ramSize = _ramSize;
         hddSize = _hddSize;
+        userid = _userid;
     }
 
-    function updateHardware (uint newRamSize, uint newHddSize) {
+    function updateHardware (uint newRamSize, uint newHddSize, string  _userid) {
         if (msg.sender != _owner) {
             revert();
         }
 
         ramSize = newRamSize;
         hddSize = newHddSize;
-    }
-
-    function assignNewAssetTag (string newAssetTag) {
-        if (msg.sender != _owner) {
-            revert();
-        }
-
-        assetTag = newAssetTag;
+        userid = _userid;
     }
 
     function assignToUser (string _userid) {
@@ -47,7 +40,7 @@ contract Hardware {
         if (msg.sender != _owner) {
             revert();
         }
-        
+
         userid = "";
     }
 }

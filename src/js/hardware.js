@@ -5,19 +5,12 @@ var Hardware = {
   },
 
   newDevice: function (serial, assetTag, ramSize, hddSize, userId) {
-    return this.contract.new(serial, assetTag, ramSize, hddSize, Util.getTransactionOption())
-      .then((deploydContract) => {
-        return deploydContract.assignToUser(userId, Util.getTransactionOption())
-          .then(() => Promise.resolve(deploydContract.address))
-      })
-      .catch((err) => Promise.reject(err))
+    return this.contract.new(serial, assetTag, ramSize, hddSize, userId, Util.getTransactionOption())
   },
 
   updateHardware: function (contractAddress, newRamSize, newHDDSize, userId) {
     let contract = this.contract.at(contractAddress)
-    return contract.updateHardware(newRamSize, newHDDSize, Util.getTransactionOption())
-      .then(() => contract.assignToUser(userId, Util.getTransactionOption()))
-      .catch((err) => Promise.reject(err))
+    return contract.updateHardware(newRamSize, newHDDSize, userId, Util.getTransactionOption())
   },
 
   getDevice: function (contractAddress) {
