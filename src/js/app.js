@@ -3,9 +3,9 @@ App = {
     let self = this
     Util.getRequest(Util.getAssetsUrl())
       .then(results => {
-        results.map(res => {
+        results.sort(Util.compareLaptops).map(res => {
           Hardware.getDevice(res.address)
-            .then(self.loadLaptop)
+            .then(laptop => self.loadLaptop(Object.assign(laptop, res)))
             .catch(err => console.log('Failed to get error'))
         })
       })
@@ -16,8 +16,8 @@ App = {
 
   loadLaptop: function (laptop) {
     let laptopTemplate = $('#laptopTemplate')
+    laptopTemplate.find('.panel-laptop').attr('_id', laptop._id)
     laptopTemplate.find('.panel-title').text(laptop.assetTag)
-    console.log(laptop.img)
     laptopTemplate.find('img').attr('src', laptop.img)
     laptopTemplate.find('.laptop-asset-tag').text(laptop.assetTag)
     laptopTemplate.find('.laptop-user-id').text(laptop.userId)

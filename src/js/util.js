@@ -20,6 +20,10 @@ var Util = {
     window.location.href = '/'
   },
 
+  compareLaptops (a, b) {
+    return a.address > b.address
+  },
+
   getRandomLaptopImage () {
     let r = Math.floor((Math.random() * 100) + 1)
     let img = '/images/SurfaceBook_Office_V2.jpg'
