@@ -17,7 +17,8 @@ App = {
   loadLaptop: function (laptop) {
     let laptopTemplate = $('#laptopTemplate')
     laptopTemplate.find('.panel-title').text(laptop.assetTag)
-    laptopTemplate.find('img').attr('src', laptop.img || Util.getRandomLaptopImage())
+    console.log(laptop.img)
+    laptopTemplate.find('img').attr('src', laptop.img)
     laptopTemplate.find('.laptop-asset-tag').text(laptop.assetTag)
     laptopTemplate.find('.laptop-user-id').text(laptop.userId)
     laptopTemplate.find('.btn-edit').attr('data-id', laptop.address)
@@ -32,12 +33,10 @@ App = {
   }
 }
 
-$(() => {
-  $(window).load(() => {
-    Util.getRequest(Util.getHardwareAbiUrl())
-      .then(data => {
-        Hardware.init(data)
-        App.init()
-      })
-  })
+$(window).ready(() => {
+  Util.getRequest(Util.getHardwareAbiUrl())
+    .then(data => {
+      Hardware.init(data)
+      App.init()
+    })
 })

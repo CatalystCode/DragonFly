@@ -36,9 +36,9 @@ App = {
     $(document).on('click', '.btn-submit', this.handleEditLaptop(this))
 
     this.mode = 'edit'
-    var address = decodeURIComponent(Util.getUrlParameter('id'))
+    this.address = decodeURIComponent(Util.getUrlParameter('id'))
     let self = this
-    Hardware.getDevice(address).then(function (laptop) {
+    Hardware.getDevice(this.address).then(function (laptop) {
       self.setLaptopValues(laptop)
     })
   },
@@ -82,8 +82,7 @@ App = {
     return function (event) {
       $('#submit-btn').prop('disabled', true)
       let laptop = self.getLaptopValues()
-      var address = self.getLaptopContractAddress()
-      Hardware.updateHardware(address, laptop.ram, laptop.hardDrive, laptop.userId)
+      Hardware.updateHardware(self.address, laptop.ram, laptop.hardDrive, laptop.userId)
         .then(Util.navigateHome)
         .catch(self.handleError)
 
@@ -97,12 +96,10 @@ App = {
   }
 }
 
-$(() => {
-  $(window).load(() => {
-    Util.getRequest(Util.getHardwareAbiUrl())
-      .then(data => {
-        Hardware.init(data)
-        App.init()
-      })
-  })
+$(window).ready(() => {
+  Util.getRequest(Util.getHardwareAbiUrl())
+    .then(data => {
+      Hardware.init(data)
+      App.init()
+    })
 })
