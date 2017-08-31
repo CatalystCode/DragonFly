@@ -32,15 +32,14 @@ var Util = {
     $('.loader-overlay').addClass('hidden')
   },
 
-  getRandomLaptopImage () {
-    let r = Math.floor((Math.random() * 100) + 1)
-    let img = '/images/SurfaceBook_Office_V2.jpg'
-    if (r % 3 === 0) {
-      img = '/images/hp.png'
-    } else if (r % 2 === 0) {
-      img = '/images/mbp.jpg'
-    }
-    return img
+  getRandomLaptopImage: function () {
+    let laptopImages = [
+      '/images/SurfaceBook_Office_V2.jpg',
+      '/images/hp.png',
+      '/images/mbp.jpg'
+    ]
+
+    return laptopImages[Math.floor(Math.random() * laptopImages.length)]
   },
 
   getUrlParameter: function (name) {
