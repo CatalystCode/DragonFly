@@ -54,7 +54,7 @@ App = {
 
   handleAddLaptop: function (self) {
     return function (event) {
-      $('#submit-btn').prop('disabled', true)
+      Util.startSpinner()
       let laptop = self.getLaptopValues()
 
       Hardware.newDevice(laptop.serialNumber, laptop.assetTag, laptop.ram, laptop.hardDrive, laptop.userId)
@@ -68,7 +68,7 @@ App = {
 
   handleEditLaptop: function (self) {
     return function (event) {
-      $('#submit-btn').prop('disabled', true)
+      Util.startSpinner()
       let laptop = self.getLaptopValues()
       Hardware.updateHardware(self.address, laptop.ram, laptop.hardDrive, laptop.userId)
         .then(Util.navigateHome)
@@ -79,7 +79,7 @@ App = {
   },
 
   handleError: function (err) {
-    $('#submit-btn').prop('disabled', false)
+    Util.stopSpinner()
     alert('Something went wrong, please try again')
   }
 }

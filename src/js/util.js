@@ -20,8 +20,16 @@ var Util = {
     window.location.href = '/'
   },
 
-  compareLaptops (a, b) {
+  compareLaptops: function (a, b) {
     return a.address > b.address
+  },
+
+  startSpinner: function () {
+    $('.loader-overlay').removeClass('hidden')
+  },
+
+  stopSpinner: function () {
+    $('.loader-overlay').addClass('hidden')
   },
 
   getRandomLaptopImage () {

@@ -1,8 +1,8 @@
 body {
-    background-image: url("/images/md-logo.jpg");
-    background-repeat: no-repeat;
-    background-size: 120px 120px;
-    background-position: right 10px top 10px;
+  background-image: url("/images/md-logo.jpg");
+  background-repeat: no-repeat;
+  background-size: 120px 120px;
+  background-position: right 10px top 10px;
 }
 
 img {
@@ -11,10 +11,47 @@ img {
 }
 
 .add-laptop-button {
-    margin: 15px;
+  margin: 15px;
 }
 
-.md-logo {
-    margin: 20px;
-    width: 120px;
+.loader-overlay {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 1500;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0, 0.5);
+  overflow-x: hidden;
+}
+
+
+.loadingTxt{
+  text-align: center;
+  position: fixed;
+  font-size:20px;
+  color:#fff;
+  top: 50%;
+  left: 50%;
+  margin-left: -55px;
+}
+
+.spinner {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  text-align: center;
+  display: block;
+  box-sizing: border-box;
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  border: 8px solid #fff;
+  border-top-color: #292727;
+  animation: spin 1s infinite linear;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
